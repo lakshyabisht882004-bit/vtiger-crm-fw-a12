@@ -1,7 +1,15 @@
 package organization;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.Duration;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,7 +17,16 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 
 public class CreateOrganizationTest {
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, EncryptedDocumentException, IOException {
+		FileInputStream fis = new FileInputStream("./src/test/resources/New Microsoft Excel Worksheet.xlsx");
+	//sending value using the excell sheet
+		
+		Workbook wb = WorkbookFactory.create(fis);
+		Sheet sh = wb.getSheet("Sheet2");
+		Row row = sh.getRow(7);
+		Cell cell = row.getCell(0);
+		String value = cell.getStringCellValue();
+		System.out.println(value);
 //		Open Browser 
 		WebDriver driver = new ChromeDriver();
 		driver.manage().window().maximize();
@@ -33,8 +50,8 @@ public class CreateOrganizationTest {
 		
 //		Filling data to the form
 		WebElement orgField = driver.findElement(By.name("accountname"));
-		String orgName = "automationWithPiyush01";
-		orgField.sendKeys(orgName);
+		//String orgName = "automationWithPiyush01";
+		orgField.sendKeys(value);
 		
 		Thread.sleep(3000);
 //		Save 
@@ -43,7 +60,7 @@ public class CreateOrganizationTest {
 //		Verification
 		String actOrgName = driver.findElement(By.id("dtlview_Organization Name")).getText();
 		
-		if (actOrgName.equals(orgName)) {
+		if (actOrgName.equals(value)) {
 			System.out.println("Created Organization successfully!!!!");
 		}else {
 			System.out.println("Failed....");
